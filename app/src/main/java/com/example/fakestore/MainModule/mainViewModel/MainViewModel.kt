@@ -1,5 +1,6 @@
 package com.example.fakestore.MainModule.mainViewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fakestore.MainModule.mainInteractor.MainInteractor
 import com.example.fakestore.common.entities.ProductEntity
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MainViewModel: ViewModel() {
 
@@ -25,8 +27,14 @@ class MainViewModel: ViewModel() {
                 result.value = resultServer
 
 
-            }catch (e:Exception){
-                e.printStackTrace()
+            }catch (e: HttpException){
+                (e as? HttpException)?.let {
+                    when(it.code()){
+                        400 -> Log.i("Error: ", "Error 400 Bad Request")
+
+                        else -> Log.i("Error: ", "Error desconocido")
+                    }
+                }
             }
         }
     }
